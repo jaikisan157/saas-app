@@ -6,10 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="1c292ceb-c519-4a20-a98d-f06763eb8b15" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/companions/new/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/companions/new/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/my-journey/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/my-journey/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/subscription/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/subscription/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/actions/companion.actions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/lib/actions/companion.actions.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,7 +94,7 @@
       <workItem from="1748087367049" duration="98000" />
       <workItem from="1748087485893" duration="8426000" />
       <workItem from="1748156095457" duration="20313000" />
-      <workItem from="1748247147669" duration="21518000" />
+      <workItem from="1748247147669" duration="22639000" />
     </task>
     <servers />
   </component>

@@ -85,4 +85,4 @@ const Profile= async ()=> {
     );
 }
 
-export default Profile
+export default Profile;
