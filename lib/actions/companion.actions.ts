@@ -18,32 +18,33 @@ export const createCompanion = async (formData: CreateCompanion) => {
     return data[0];
 }
 
-export const getAllCompanions = async ({limit = 10, page = 1, subject, topic }:GetAllCompanions)=>{
+export const getAllCompanions = async ({ limit = 10, page = 1, subject, topic }: GetAllCompanions) => {
     const supabase = createSupabaseClient();
+
     let query = supabase.from('companions').select();
 
-    if(subject && topic){
-        query = query.ilike('subject',`%${subject}%`)
-            .or(`topic.ilike.%${topic}%,name.ilike.%{topic}`)
-    }else if(subject){
-        query=query.ilike('subject',`%${subject}%`)
-    }else if(topic){
-        query=query.or(`topic.ilike.%${topic}%,name.ilike.%{topic}`)
+    if(subject && topic) {
+        query = query.ilike('subject', `%${subject}%`)
+            .or(`topic.ilike.%${topic}%,name.ilike.%${topic}%`)
+    } else if(subject) {
+        query = query.ilike('subject', `%${subject}%`)
+    } else if(topic) {
+        query = query.or(`topic.ilike.%${topic}%,name.ilike.%${topic}%`)
     }
 
-    query = query.range((page-1) * limit, page * limit - 1);
+    query = query.range((page - 1) * limit, page * limit - 1);
 
-    const {data: companions,error} = await query;
+    const { data: companions, error } = await query;
 
     if(error) throw new Error(error.message);
 
     return companions;
 }
 
-export const getCompanion = async (id:string) => {
+export const getCompanion = async (id: string) => {
     const supabase = createSupabaseClient();
 
-    const {data , error} = await supabase
+    const { data, error } = await supabase
         .from('companions')
         .select()
         .eq('id', id);
@@ -51,7 +52,6 @@ export const getCompanion = async (id:string) => {
     if(error) return console.log(error);
 
     return data[0];
-
 }
 
 export const addToSessionHistory = async (companionId: string) => {
@@ -81,12 +81,12 @@ export const getRecentSessions = async (limit = 10) => {
     return data.map(({ companions }) => companions);
 }
 
-export const getUserSessions = async (userId: string,limit=10) => {
+export const getUserSessions = async (userId: string, limit = 10) => {
     const supabase = createSupabaseClient();
     const { data, error } = await supabase
         .from('session_history')
         .select(`companions:companion_id (*)`)
-        .eq('user_id',userId)
+        .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .limit(limit)
 
@@ -100,7 +100,7 @@ export const getUserCompanions = async (userId: string) => {
     const { data, error } = await supabase
         .from('companions')
         .select()
-        .eq('author',userId)
+        .eq('author', userId)
 
     if(error) throw new Error(error.message);
 
@@ -137,3 +137,53 @@ export const newCompanionPermissions = async () => {
     }
 }
 
+// Bookmarks
+export const addBookmark = async (companionId: string, path: string) => {
+    const { userId } = await auth();
+    if (!userId) return;
+    const supabase = createSupabaseClient();
+    const { data, error } = await supabase.from("bookmarks").insert({
+        companion_id: companionId,
+        user_id: userId,
+    });
+    if (error) {
+        throw new Error(error.message);
+    }
+    // Revalidate the path to force a re-render of the page
+
+    revalidatePath(path);
+    return data;
+};
+
+export const removeBookmark = async (companionId: string, path: string) => {
+    const { userId } = await auth();
+    if (!userId) return;
+    const supabase = createSupabaseClient();
+    const { data, error } = await supabase
+        .from("bookmarks")
+        .delete()
+        .eq("companion_id", companionId)
+        .eq("user_id", userId);
+    if (error) {
+        throw new Error(error.message);
+    }
+    revalidatePath(path);
+    return data;
+};
+
+export const getBookmarkedCompanions = async (userId: string) => {
+    const supabase = createSupabaseClient();
+    const { data, error } = await supabase
+        .from("bookmarks")
+        .select(`companions:companion_id (*)`)
+        .eq("user_id", userId);
+
+    if (error) throw new Error(error.message);
+
+    // Deduplicate by companion ID
+    const uniqueCompanions = Array.from(
+        new Map(data.map(({ companions }) => [companions.id, companions])).values()
+    );
+
+    return uniqueCompanions;
+};

@@ -18,7 +18,12 @@ interface CompanionsListProps {
     classNames?: string;
 }
 
-const CompanionsList = ({ title, companions, classNames }: CompanionsListProps) => {
+const CompanionsList = ({ title, companions = [], classNames }: CompanionsListProps) => {
+    // Deduplicate companions based on their ID
+    const uniqueCompanions = Array.from(
+        new Map(companions.map(comp => [comp.id, comp])).values()
+    );
+
     return (
         <article className={cn('companion-list', classNames)}>
             <h2 className="font-bold text-3xl">{title}</h2>
@@ -32,7 +37,7 @@ const CompanionsList = ({ title, companions, classNames }: CompanionsListProps) 
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {companions?.map(({id, subject, name, topic, duration}) => (
+                    {uniqueCompanions.map(({ id, subject, name, topic, duration }) => (
                         <TableRow key={id}>
                             <TableCell>
                                 <Link href={`/companions/${id}`}>
@@ -59,7 +64,7 @@ const CompanionsList = ({ title, companions, classNames }: CompanionsListProps) 
                                 <div className="subject-badge w-fit max-md:hidden">
                                     {subject}
                                 </div>
-                                <div className="flex items-center justify-center rounded-lg w-fit p-2 md:hidden" style={{backgroundColor: getSubjectColor(subject)}}>
+                                <div className="flex items-center justify-center rounded-lg w-fit p-2 md:hidden" style={{ backgroundColor: getSubjectColor(subject) }}>
                                     <Image
                                         src={`/icons/${subject}.svg`}
                                         alt={subject}
